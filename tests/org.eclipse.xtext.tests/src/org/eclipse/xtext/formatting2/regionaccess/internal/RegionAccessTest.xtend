@@ -8,16 +8,26 @@
 package org.eclipse.xtext.formatting2.regionaccess.internal
 
 import com.google.inject.Inject
-import org.eclipse.xtext.formatting2.debug.TokenAccessToString
+import com.google.inject.Provider
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.formatting2.regionaccess.internal.regionaccesstestlanguage.Root
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.eclipse.xtext.resource.XtextResource
+import org.eclipse.xtext.serializer.acceptor.ISemanticSequenceAcceptor
+import org.eclipse.xtext.serializer.acceptor.ISequenceAcceptor
+import org.eclipse.xtext.serializer.acceptor.ISyntacticSequenceAcceptor
+import org.eclipse.xtext.serializer.diagnostic.ISerializationDiagnostic.ExceptionThrowingAcceptor
+import org.eclipse.xtext.serializer.sequencer.IContextFinder
+import org.eclipse.xtext.serializer.sequencer.IHiddenTokenSequencer
+import org.eclipse.xtext.serializer.sequencer.ISemanticSequencer
+import org.eclipse.xtext.serializer.sequencer.ISyntacticSequencer
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.xtext.formatting2.debug.TextRegionAccessToString
 
 /**
  * @author Moritz Eysholdt - Initial contribution and API
@@ -27,6 +37,7 @@ import org.junit.runner.RunWith
 class RegionAccessTest {
 	@Inject ParseHelper<Root> parseHelper
 	@Inject ValidationTestHelper validationTestHelper
+	@Inject SerializerHelper serializerHelper
 
 	@Test def void testSimple() {
 		'''
@@ -479,12 +490,43 @@ class RegionAccessTest {
 			18 0 Hidden
 		'''
 	}
-
+	
 	private def ===(CharSequence file, CharSequence expectation) {
+		val exp = expectation.toString
 		val obj = parseHelper.parse(file)
 		validationTestHelper.assertNoErrors(obj)
-		val access = new NodeModelBasedRegionAccess.Builder().withResource(obj.eResource as XtextResource).create
-		val actual = new TokenAccessToString().withOrigin(access).hideColumnExplanation().toString
-		Assert.assertEquals(expectation.toString, actual + "\n")
+		val access1 = obj.createFromNodeModel
+		val access2 = obj.createFromSerializer
+		Assert.assertEquals(exp, new TextRegionAccessToString().withOrigin(access1).hideColumnExplanation() + "\n")
+		Assert.assertEquals(exp, new TextRegionAccessToString().withOrigin(access2).hideColumnExplanation() + "\n")
+	}
+
+	private def createFromNodeModel(EObject obj) {
+		new NodeModelBasedRegionAccess.Builder().withResource(obj.eResource as XtextResource).create
+	}
+
+	private def createFromSerializer(EObject obj) {
+		val builder = new TextRegionAccessBuildingSequencer().withRoot(obj)
+		serializerHelper.serialize(obj, builder)
+		builder.regionAccess
+	}
+}
+
+class SerializerHelper {
+	@Inject Provider<ISemanticSequencer> semanticSequencerProvider;
+	@Inject Provider<ISyntacticSequencer> syntacticSequencerProvider;
+	@Inject Provider<IHiddenTokenSequencer> hiddenTokenSequencerProvider;
+	@Inject IContextFinder contextFinder;
+
+	def void serialize(EObject semanticObject, ISequenceAcceptor tokens) {
+		val errors = new ExceptionThrowingAcceptor
+		val context = contextFinder.findContextsByContentsAndContainer(semanticObject, null).iterator.next
+		val semantic = semanticSequencerProvider.get();
+		val syntactic = syntacticSequencerProvider.get();
+		val hidden = hiddenTokenSequencerProvider.get();
+		semantic.init(syntactic as ISemanticSequenceAcceptor, errors);
+		syntactic.init(context, semanticObject, hidden as ISyntacticSequenceAcceptor, errors);
+		hidden.init(context, semanticObject, tokens, errors);
+		semantic.createSequence(context, semanticObject);
 	}
 }

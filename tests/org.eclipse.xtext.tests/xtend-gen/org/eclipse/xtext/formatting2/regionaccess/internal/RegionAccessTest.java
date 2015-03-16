@@ -8,11 +8,15 @@
 package org.eclipse.xtext.formatting2.regionaccess.internal;
 
 import com.google.inject.Inject;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtend2.lib.StringConcatenation;
-import org.eclipse.xtext.formatting2.debug.TokenAccessToString;
+import org.eclipse.xtext.formatting2.debug.TextRegionAccessToString;
 import org.eclipse.xtext.formatting2.regionaccess.internal.NodeModelBasedRegionAccess;
 import org.eclipse.xtext.formatting2.regionaccess.internal.RegionAccessTestLanguageInjectorProvider;
+import org.eclipse.xtext.formatting2.regionaccess.internal.SerializerHelper;
+import org.eclipse.xtext.formatting2.regionaccess.internal.StringBasedRegionAccess;
+import org.eclipse.xtext.formatting2.regionaccess.internal.TextRegionAccessBuildingSequencer;
 import org.eclipse.xtext.formatting2.regionaccess.internal.regionaccesstestlanguage.Root;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
@@ -36,6 +40,9 @@ public class RegionAccessTest {
   
   @Inject
   private ValidationTestHelper validationTestHelper;
+  
+  @Inject
+  private SerializerHelper serializerHelper;
   
   @Test
   public void testSimple() {
@@ -1059,20 +1066,41 @@ public class RegionAccessTest {
   
   private void operator_tripleEquals(final CharSequence file, final CharSequence expectation) {
     try {
+      final String exp = expectation.toString();
       final Root obj = this.parseHelper.parse(file);
       this.validationTestHelper.assertNoErrors(obj);
-      NodeModelBasedRegionAccess.Builder _builder = new NodeModelBasedRegionAccess.Builder();
-      Resource _eResource = obj.eResource();
-      NodeModelBasedRegionAccess.Builder _withResource = _builder.withResource(((XtextResource) _eResource));
-      final NodeModelBasedRegionAccess access = _withResource.create();
-      TokenAccessToString _tokenAccessToString = new TokenAccessToString();
-      TokenAccessToString _withOrigin = _tokenAccessToString.withOrigin(access);
-      TokenAccessToString _hideColumnExplanation = _withOrigin.hideColumnExplanation();
-      final String actual = _hideColumnExplanation.toString();
-      String _string = expectation.toString();
-      Assert.assertEquals(_string, (actual + "\n"));
+      final NodeModelBasedRegionAccess access1 = this.createFromNodeModel(obj);
+      final StringBasedRegionAccess access2 = this.createFromSerializer(obj);
+      TextRegionAccessToString _textRegionAccessToString = new TextRegionAccessToString();
+      TextRegionAccessToString _withOrigin = _textRegionAccessToString.withOrigin(access1);
+      TextRegionAccessToString _hideColumnExplanation = _withOrigin.hideColumnExplanation();
+      String _plus = (_hideColumnExplanation + "\n");
+      Assert.assertEquals(exp, _plus);
+      TextRegionAccessToString _textRegionAccessToString_1 = new TextRegionAccessToString();
+      TextRegionAccessToString _withOrigin_1 = _textRegionAccessToString_1.withOrigin(access2);
+      TextRegionAccessToString _hideColumnExplanation_1 = _withOrigin_1.hideColumnExplanation();
+      String _plus_1 = (_hideColumnExplanation_1 + "\n");
+      Assert.assertEquals(exp, _plus_1);
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }
+  }
+  
+  private NodeModelBasedRegionAccess createFromNodeModel(final EObject obj) {
+    NodeModelBasedRegionAccess.Builder _builder = new NodeModelBasedRegionAccess.Builder();
+    Resource _eResource = obj.eResource();
+    NodeModelBasedRegionAccess.Builder _withResource = _builder.withResource(((XtextResource) _eResource));
+    return _withResource.create();
+  }
+  
+  private StringBasedRegionAccess createFromSerializer(final EObject obj) {
+    StringBasedRegionAccess _xblockexpression = null;
+    {
+      TextRegionAccessBuildingSequencer _textRegionAccessBuildingSequencer = new TextRegionAccessBuildingSequencer();
+      final TextRegionAccessBuildingSequencer builder = _textRegionAccessBuildingSequencer.withRoot(obj);
+      this.serializerHelper.serialize(obj, builder);
+      _xblockexpression = builder.getRegionAccess();
+    }
+    return _xblockexpression;
   }
 }

@@ -9,7 +9,7 @@ package org.eclipse.xtext.formatting2.regionaccess.internal;
 
 import java.util.List;
 
-import org.eclipse.xtext.formatting2.debug.TokenAccessToString;
+import org.eclipse.xtext.formatting2.debug.TextRegionAccessToString;
 import org.eclipse.xtext.formatting2.internal.AbstractTextSegment;
 import org.eclipse.xtext.formatting2.regionaccess.IComment;
 import org.eclipse.xtext.formatting2.regionaccess.IHiddenRegion;
@@ -23,9 +23,11 @@ import com.google.common.collect.Lists;
 /**
  * @author Moritz Eysholdt - Initial contribution and API
  */
+/**
+ * @author Moritz Eysholdt - Initial contribution and API
+ */
 public abstract class AbstractHiddenRegion extends AbstractTextSegment implements IHiddenRegion {
-
-	List<IHiddenRegionPart> hiddens = Lists.newArrayList();
+	private final List<IHiddenRegionPart> hiddens = Lists.newArrayList();
 	private ISemanticRegion next;
 	private ISemanticRegion previous;
 	private final ITextRegionAccess tokenAccess;
@@ -33,6 +35,10 @@ public abstract class AbstractHiddenRegion extends AbstractTextSegment implement
 	protected AbstractHiddenRegion(ITextRegionAccess tokenAccess) {
 		super();
 		this.tokenAccess = tokenAccess;
+	}
+
+	protected void addPart(IHiddenRegionPart part) {
+		this.hiddens.add(part);
 	}
 
 	@Override
@@ -103,7 +109,6 @@ public abstract class AbstractHiddenRegion extends AbstractTextSegment implement
 
 	@Override
 	public String toString() {
-		return new TokenAccessToString().withOrigin(this).hightlightOrigin().toString();
+		return new TextRegionAccessToString().withOrigin(this).hightlightOrigin().toString();
 	}
-
 }

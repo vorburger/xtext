@@ -38,7 +38,7 @@ import com.google.common.collect.Sets;
 /**
  * @author Moritz Eysholdt - Initial contribution and API
  */
-public class TokenAccessToString {
+public class TextRegionAccessToString {
 
 	private static final int TITLE_WIDTH = 9;
 	private static final String SEMANTIC_PADDED = Strings.padEnd("Semantic", TITLE_WIDTH, ' ');
@@ -56,12 +56,12 @@ public class TokenAccessToString {
 
 	private ITextSegment origin;
 
-	public TokenAccessToString hideColumnExplanation() {
+	public TextRegionAccessToString hideColumnExplanation() {
 		this.hideColumnExplanation = true;
 		return this;
 	}
 
-	public TokenAccessToString hightlightOrigin() {
+	public TextRegionAccessToString hightlightOrigin() {
 		this.hightlightOrigin = true;
 		return this;
 	}
@@ -270,7 +270,7 @@ public class TokenAccessToString {
 		return result;
 	}
 
-	public TokenAccessToString withOrigin(ITextSegment origin) {
+	public TextRegionAccessToString withOrigin(ITextSegment origin) {
 		this.origin = origin;
 		return this;
 	}
