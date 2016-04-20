@@ -13,6 +13,8 @@ class ResourceBaseProvider2Impl extends ResourceBaseProviderImpl implements IRes
     new(String resourceBase) throws IOException {
         super(resourceBase)
         this.resourceBase = new File(resourceBase)
+        if (!this.resourceBase.exists)
+            this.resourceBase.mkdirs
         if (!this.resourceBase.isDirectory)
             throw new IllegalArgumentException("Not a directory: " + this.resourceBase)
     }
