@@ -8,7 +8,10 @@ import org.eclipse.xtext.web.server.persistence.ResourceBaseProviderImpl
 class ResourceBaseProvider2Impl extends ResourceBaseProviderImpl implements IResourceBaseProvider2 {
     
     protected val File resourceBase
-    val String[] extensions = #[ "xtend" ]
+    
+    new(Project project) throws IOException {
+        this(project.limitedSourceDirectory)
+    }
     
     new(File resourceBase) throws IOException {
         super(resourceBase.toString)
@@ -20,7 +23,7 @@ class ResourceBaseProvider2Impl extends ResourceBaseProviderImpl implements IRes
     }
     
     override getResourceIDs() {
-        FileUtils.listFiles(resourceBase, extensions, true).map[resourceBase.toPath.relativize(it.toPath).toString ]
+        FileUtils.listFiles(resourceBase, Project.xtendExtensions, true).map[resourceBase.toPath.relativize(it.toPath).toString ]
     }
     
 }

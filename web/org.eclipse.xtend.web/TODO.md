@@ -1,9 +1,11 @@
 
 - [ ] point to real project where file depends on others.. ResourceSet problem?!
 
-- [ ] Make this a LIB which allows me to CUSTOMIZE the UI!
+- [ ] Sven: Make this a LIB? Allows me to CUSTOMIZE the UI, yet share some (JS) code
  
-- [ ] dirty indicator?  
+ - [ ] generalize ExamplesLibrary - make it a def init() of Project (for MCS it will just put a build.gradle)
+ 
+- [ ] dirty indicator?
 
 - [ ] multi user
 

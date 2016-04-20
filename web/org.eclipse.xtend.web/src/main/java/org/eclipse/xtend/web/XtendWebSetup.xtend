@@ -34,7 +34,8 @@ import java.io.File
 	}
 
 	def protected webDevEnvModule() {
-	    val p = ExamplesLibrary.exampleProject
+	    val p = new Project(new File("/home/vorburger/dev/Minecraft/SwissKnightMinecraft/SpongePowered/MyFirstSpongePlugIn"), "src/main/java", "ch/vorburger/minecraft/michaelpapa7")
+	    // val p = ExamplesLibrary.exampleProject
       new WebDevEnvModule(p)
 	}
 
