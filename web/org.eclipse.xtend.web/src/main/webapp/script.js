@@ -99,6 +99,8 @@ require([ "webjars/ace/1.2.0/src/ace" ], function() {
 				generateJava();
 			}
 		});
+		
+		loadResourceIdsList();
 	});
 });
 
@@ -107,7 +109,7 @@ function btn1Action(btn) {
 	var currentEditor = document.getElementById("xtext-editor");
 	var changedEditor = document.getElementById("annotation-editor");
 	var changedBtn = document.getElementById("btn2");
-	if (btn.textContent =="-") {
+	if (btn.textContent == "-") {
 		btn.textContent = "+";
 		//currentEditor.style.display = "none";
 		currentEditor.style.height = "8px";
@@ -115,7 +117,7 @@ function btn1Action(btn) {
 		changedBtn.style.top = "80px";
 		changedBtn.disabled = true;
 	}
-	else if (btn.textContent =="+") {
+	else if (btn.textContent == "+") {
 		btn.textContent = "-";
 		changedEditor.style.top = "60%";
 		changedBtn.style.top = "60%";
@@ -129,7 +131,7 @@ function btn1Action(btn) {
 function btn2Action(btn) {
 	var currentEditor = document.getElementById("annotation-editor");
 	var changedEditor = document.getElementById("xtext-editor");
-	if (btn.textContent =="-") {
+	if (btn.textContent == "-") {
 		btn.textContent = "+";
 		//currentEditor.style.display = "none";
 		currentEditor.style.top = "95%";
@@ -138,7 +140,7 @@ function btn2Action(btn) {
 		changedEditor.style.bottom = "6%";
 		document.getElementById("btn1").disabled = true;
 	}
-	else if (btn.textContent =="+") {
+	else if (btn.textContent == "+") {
 		changedEditor.style.bottom = "auto";
 		changedEditor.style.height = "45%";
 		btn.textContent = "-";
@@ -163,22 +165,22 @@ function generateJava() {
 		}
 		// when xtend file contains only one class
 		if (generateResult.documents == null) {
-			var simpleName =document.getElementById("exampleList").value+".java";
+			var simpleName = document.getElementById("exampleList").value+".java";
 			var option = document.createElement("option");
-			option.value=simpleName;
-			option.innerHTML=simpleName;
+			option.value = simpleName;
+			option.innerHTML = simpleName;
 			comboBox.appendChild(option);
 			aceEditor.getSession().setValue(generateResult.artifacts[0].content);
 			return;
 		}
-		//when xtend file contains more than one class.
+		// when xtend file contains more than one class.
 		for (var i = 0; i< generateResult.documents.length;i++) {
 			var doc = generateResult.documents[i];
 			var simpleName = doc.name.split("/").pop();
 			javaFileList[simpleName] = doc.content;
 			var option = document.createElement("option");
-			 option.value=simpleName;
-			 option.innerHTML=simpleName;
+			 option.value = simpleName;
+			 option.innerHTML = simpleName;
 			 comboBox.appendChild(option); 			
 		}
 		old_java_selectItem = comboBox.value;
@@ -236,6 +238,8 @@ function loadResourceIdsList() {
                 option.innerHTML = resouceID;
                 comboBox.appendChild(option);
             }
+            
+            changeExample();
         }
     }
     xmlhttp.send();
@@ -298,6 +302,8 @@ function changeExample() {
 		twoEditorMode();
 		loadActiveAnnotationExample(resourceId, annotationResourceId);
 	}
+	
+	generateJava();
 }
 
 function loadResourceById(editor, resourceId) {
