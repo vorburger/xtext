@@ -1,11 +1,9 @@
 
-- [ ] get it to work again as-is
-
-- [ ] multi project, and add all files from ExamplesLibrary
-
 - [ ] multi user
 
 - [ ] security
+
+- [ ] multi project, and add all files from ExamplesLibrary
 
 - [ ] Make this a LIB which allows me to CUSTOMIZE the UI!
  
