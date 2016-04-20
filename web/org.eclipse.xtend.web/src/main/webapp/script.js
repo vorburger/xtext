@@ -165,7 +165,8 @@ function generateJava() {
 		}
 		// when xtend file contains only one class
 		if (generateResult.documents == null) {
-			var simpleName = document.getElementById("exampleList").value+".java";
+		   var xtendName = document.getElementById("exampleList").value;
+			var simpleName = xtendName.substring(0, xtendName.length- 6) + ".java";
 			var option = document.createElement("option");
 			option.value = simpleName;
 			option.innerHTML = simpleName;
