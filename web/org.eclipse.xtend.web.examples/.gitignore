@@ -1,0 +1,8 @@
+.project
+.classpath
+src/main/java/*
+.settings/
+xtend-gen/
+target/
+bin/
+

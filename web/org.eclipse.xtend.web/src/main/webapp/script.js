@@ -102,12 +102,12 @@ require([ "webjars/ace/1.2.0/src/ace" ], function() {
 	});
 });
 
-//btn1--> the button for resizing the xtend editor 
-function btn1Action(btn){
+// btn1--> the button for resizing the xtend editor 
+function btn1Action(btn) {
 	var currentEditor = document.getElementById("xtext-editor");
 	var changedEditor = document.getElementById("annotation-editor");
 	var changedBtn = document.getElementById("btn2");
-	if (btn.textContent =="-"){
+	if (btn.textContent =="-") {
 		btn.textContent = "+";
 		//currentEditor.style.display = "none";
 		currentEditor.style.height = "8px";
@@ -115,7 +115,7 @@ function btn1Action(btn){
 		changedBtn.style.top = "80px";
 		changedBtn.disabled = true;
 	}
-	else if (btn.textContent =="+"){
+	else if (btn.textContent =="+") {
 		btn.textContent = "-";
 		changedEditor.style.top = "60%";
 		changedBtn.style.top = "60%";
@@ -125,11 +125,11 @@ function btn1Action(btn){
 	}
 }
 
-//btn2--> the button for resizing the active annotation editor
-function btn2Action(btn){
+// btn2--> the button for resizing the active annotation editor
+function btn2Action(btn) {
 	var currentEditor = document.getElementById("annotation-editor");
 	var changedEditor = document.getElementById("xtext-editor");
-	if (btn.textContent =="-"){
+	if (btn.textContent =="-") {
 		btn.textContent = "+";
 		//currentEditor.style.display = "none";
 		currentEditor.style.top = "95%";
@@ -138,7 +138,7 @@ function btn2Action(btn){
 		changedEditor.style.bottom = "6%";
 		document.getElementById("btn1").disabled = true;
 	}
-	else if (btn.textContent =="+"){
+	else if (btn.textContent =="+") {
 		changedEditor.style.bottom = "auto";
 		changedEditor.style.height = "45%";
 		btn.textContent = "-";
@@ -158,11 +158,11 @@ function generateJava() {
 	editor.xtextServices.generate().done(function(generateResult) {
 		javaFileList = {};
 		var comboBox = document.getElementById("javaFileList");
-		while(comboBox.options.length > 0){                
+		while(comboBox.options.length > 0) {                
 		    comboBox.remove(0);
 		}
 		// when xtend file contains only one class
-		if (generateResult.documents == null){
+		if (generateResult.documents == null) {
 			var simpleName =document.getElementById("exampleList").value+".java";
 			var option = document.createElement("option");
 			option.value=simpleName;
@@ -172,7 +172,7 @@ function generateJava() {
 			return;
 		}
 		//when xtend file contains more than one class.
-		for (var i = 0; i< generateResult.documents.length;i++){
+		for (var i = 0; i< generateResult.documents.length;i++) {
 			var doc = generateResult.documents[i];
 			var simpleName = doc.name.split("/").pop();
 			javaFileList[simpleName] = doc.content;
@@ -185,7 +185,8 @@ function generateJava() {
 		aceEditor.getSession().setValue(javaFileList[comboBox.value]);
 	});
 }
-//when user change the item of the right side comboBox
+
+// When user change the item of the right side comboBox
 function changeJavaFile() {
 	var comboBox = document.getElementById("javaFileList");
 	javaFileList[old_java_selectItem] = aceEditor.getSession().getValue();
@@ -200,7 +201,7 @@ function Java2Xtend() {
 		return;
 	}
 	var xmlhttp = new XMLHttpRequest();
-	var url = 'http://' + location.host + '/xtext-service/java2xtend?resource=java.xtend';
+	var url = window.location.protocol + '//' + window.location.host + '/xtext-service/java2xtend?resource=java2xtend.xtend';
 	xmlhttp.open("POST", url, true);
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
@@ -215,10 +216,33 @@ function Java2Xtend() {
 	xmlhttp.send(sendmsg);
 }
 
-var old_resourceIndex = 0
+function loadResourceIdsList() {
+    var xmlhttp = new XMLHttpRequest();
+    var url = window.location.protocol + '//' + window.location.host + '/xtext-service/list?resource=list.xtend';
+    xmlhttp.open("GET", url, true);
+    // xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            var comboBox = document.getElementById("exampleList");
+            while(comboBox.options.length > 0) {
+                comboBox.remove(0);
+            }
+            
+            var result = JSON.parse(xmlhttp.responseText);
+            for (i = 0; i < result.resouceIDs.length; i++) { 
+                var resouceID = result.resouceIDs[i];
+                var option = document.createElement("option");
+                option.value = resouceID;
+                option.innerHTML = resouceID;
+                comboBox.appendChild(option);
+            }
+        }
+    }
+    xmlhttp.send();
+}
 
-//Adapting the display when select an example without active annotation.
-function oneEditorMode(){
+// Adapting the display when select an example without active annotation.
+function oneEditorMode() {
 	var currentEditor = document.getElementById("xtext-editor");
 	var changedEditor = document.getElementById("annotation-editor");
 	var btn = document.getElementById("btn1");
@@ -230,8 +254,9 @@ function oneEditorMode(){
 	currentEditor.style.height = "auto";
 	currentEditor.style.bottom = "0";
 }
-//Adapting the display when select an example with active annotation
-function twoEditorMode(){
+
+// Adapting the display when select an example with active annotation
+function twoEditorMode() {
 	var currentEditor = document.getElementById("xtext-editor");
 	var changedEditor = document.getElementById("annotation-editor");
 	var btn = document.getElementById("btn1");
@@ -247,78 +272,55 @@ function twoEditorMode(){
 	currentEditor.style.bottom = "auto";
 	currentEditor.style.height = "45%";
 }
-//after changing the xtend example
+
+String.prototype.endsWith = function(suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+};
+
+// After changing the xtend example
 function changeExample() {
-	var resourceId = "helloWorld.xtend";
-	var annotationResourceId = "helloWorld.xtend";
-	switch (document.getElementById("exampleList").selectedIndex) {
-	case 0:
-		resourceId = "helloWorld.xtend";
-		break;
-	case 1:
-		resourceId = "BasicExpressions.xtend";
-		break;
-	case 2:
-		resourceId = "BottleSong.xtend";
-		break;
-	case 3:
-		resourceId = "HtmlBuilder.xtend";
-		break;
-	case 4:
-		resourceId = "Movies.xtend";
-		break;
-	case 5:
-		resourceId = "Observable.xtend";
+	var resourceId = document.getElementById("exampleList").value;
+	var annotationResourceId = "";
+	if (resourceId.endsWith("Observable.xtend")) {
 		annotationResourceId = "ObservableExample.xtend";
-		break;
-	case 6:
-		resourceId = "Extract.xtend";
+	} else if (resourceId.endsWith("Extract.xtend")) {
 		annotationResourceId = "ExtractExample.xtend";
-		break;
-	case 7:
-		resourceId = "Externalized.xtend";
+   } else if (resourceId.endsWith("Externalized.xtend")) {
 		annotationResourceId = "ExternalizedExample.xtend";
-		break;
-	case 8:
-		resourceId = "Lazy.xtend";
+   } else if (resourceId.endsWith("Lazy.xtend")) {
 		annotationResourceId = "LazyExample.xtend";
-		break;
 	}
 	
-	if (document.getElementById("exampleList").selectedIndex<5){
-		if (old_resourceIndex>4){
-			oneEditorMode();
-		}
+	if (annotationResourceId == "") {
+		oneEditorMode();
 		loadResourceById(editor, resourceId);
+	} else {
+		twoEditorMode();
+		loadActiveAnnotationExample(resourceId, annotationResourceId);
 	}
-	else{
-		if (old_resourceIndex<5){
-			twoEditorMode();
-		}
-		loadActiveAnnotationExample(resourceId,annotationResourceId);
-	}
-	old_resourceIndex = document.getElementById("exampleList").selectedIndex;
 }
 
-function loadResourceById(editor,resourceId){
-	resetResourceId(resourceId,editor);
-	editor.xtextServices.loadResourceService.setState("strated");
-	editor.xtextServices.loadResource();
+function loadResourceById(editor, resourceId) {
+    resetResourceId(resourceId,editor);
+    editor.xtextServices.loadResourceService.setState("started");
+    editor.xtextServices.loadResource();
 }
-function loadActiveAnnotationExample(annotationResourceId,exampleResourceId){
+
+function loadActiveAnnotationExample(annotationResourceId, exampleResourceId) {
 	loadResourceById(editor, exampleResourceId);
 	loadResourceById(editor2, annotationResourceId);
 }
 
-function resetResourceId(resourceId,editor) {
+function resetResourceId(resourceId, editor) {
 	editor.xtextServices.options.resourceId = resourceId;
-	editor.xtextServices.loadResourceService._encodedResourceId = resourceId;
-	editor.xtextServices.saveResourceService._encodedResourceId = resourceId;
+   editor.xtextServices.loadResourceService._encodedResourceId = resourceId;
+   editor.xtextServices.saveResourceService._encodedResourceId = resourceId;
 	editor.xtextServices.contentAssistService._encodedResourceId = resourceId;
 	editor.xtextServices.formattingService._encodedResourceId = resourceId;
 	editor.xtextServices.generatorService._encodedResourceId = resourceId;
 	editor.xtextServices.occurrencesService._encodedResourceId = resourceId;
-	editor.xtextServices.revertResourceService._encodedResourceId = resourceId;
+   editor.xtextServices.revertResourceService._encodedResourceId = resourceId;
 	editor.xtextServices.updateService._encodedResourceId = resourceId;
 	editor.xtextServices.validationService._encodedResourceId = resourceId;
 }
+ 

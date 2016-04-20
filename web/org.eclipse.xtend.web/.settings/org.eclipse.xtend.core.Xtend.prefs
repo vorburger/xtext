@@ -1,0 +1,20 @@
+#Wed Apr 20 22:13:24 CEST 2016
+//outlet.DEFAULT_OUTPUT.sourceFolder.src/main/java.directory=build/xtend/main
+eclipse.preferences.version=1
+//outlet.DEFAULT_OUTPUT.sourceFolder.src/main/resources.directory=build/xtend/main
+//outlet.DEFAULT_OUTPUT.sourceFolder.src/test/xtext-gen.directory=build/xtend/test
+//outlet.DEFAULT_OUTPUT.sourceFolder.src/main/xtend-gen.directory=build/xtend/main
+outlet.DEFAULT_OUTPUT.hideLocalSyntheticVariables=true
+outlet.DEFAULT_OUTPUT.userOutputPerSourceFolder=true
+generateGeneratedAnnotation=false
+includeDateInGenerated=false
+targetJavaVersion=Java6
+generateSuppressWarnings=true
+BuilderConfiguration.is_project_specific=true
+outlet.DEFAULT_OUTPUT.installDslAsPrimarySource=false
+//outlet.DEFAULT_OUTPUT.sourceFolder.src/test/java.directory=build/xtend/test
+//outlet.DEFAULT_OUTPUT.sourceFolder.src/test/resources.directory=build/xtend/test
+//outlet.DEFAULT_OUTPUT.sourceFolder.src/test/xtend-gen.directory=build/xtend/test
+//outlet.DEFAULT_OUTPUT.sourceFolder.src/main/xtext-gen.directory=build/xtend/main
+ValidatorConfiguration.is_project_specific=true
+useJavaCompilerCompliance=false

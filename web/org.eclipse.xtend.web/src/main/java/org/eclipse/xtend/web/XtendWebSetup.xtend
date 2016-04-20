@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutorService
 import org.eclipse.xtend.core.XtendRuntimeModule
 import org.eclipse.xtend.core.XtendStandaloneSetup
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import org.eclipse.xtend.web.devenv.WebDevEnvModule
 
 /**
  * Initialization support for running Xtext languages in web applications.
@@ -26,7 +27,12 @@ import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
 	override Injector createInjector() {
 		val runtimeModule = new XtendRuntimeModule()
 		val webModule = new XtendWebModule(executorServiceProvider)
-		return Guice.createInjector(Modules.override(runtimeModule).with(webModule))
+     val webDevEnvModule = webDevEnvModule()
+		return Guice.createInjector(Modules.combine(Modules.override(runtimeModule).with(webModule)), webDevEnvModule)
 	}
-	
+
+	def protected webDevEnvModule() {
+	    new WebDevEnvModule("../org.eclipse.xtend.web.examples/src/main/java")
+	}
+
 }

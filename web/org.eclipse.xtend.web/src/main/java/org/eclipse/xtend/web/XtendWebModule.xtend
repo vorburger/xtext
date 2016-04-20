@@ -26,6 +26,7 @@ import org.eclipse.xtext.parser.antlr.LexerProvider
 import org.eclipse.xtext.web.server.XtextServiceDispatcher
 import org.eclipse.xtext.web.server.occurrences.OccurrencesService
 import org.eclipse.xtext.web.server.persistence.IServerResourceHandler
+import org.eclipse.xtext.web.server.persistence.FileResourceHandler
 
 /**
  * Use this class to register additional components to be used within the web application.
@@ -54,7 +55,7 @@ import org.eclipse.xtext.web.server.persistence.IServerResourceHandler
 	}
 
 	def Class<? extends IServerResourceHandler> bindIServerResourceHandler() {
-		return ExampleResourceHandler
+		return FileResourceHandler
 	}
 	
 	def Class<? extends OccurrencesService> bindOccurencesService() {

@@ -1,6 +1,7 @@
 plugins {
 	id 'osgi'
 	id 'war'
+	id 'org.xtext.xtend' version '1.0.4'
 }
 
 dependencies {
@@ -19,6 +20,8 @@ dependencies {
 	
 	providedCompile "org.eclipse.jetty:jetty-annotations:9.2.11.v20150529"
 	providedCompile "org.slf4j:slf4j-simple:1.7.12"
+	
+	compile "commons-io:commons-io:2.4"
 }
 
 task jettyRun(type:JavaExec) {

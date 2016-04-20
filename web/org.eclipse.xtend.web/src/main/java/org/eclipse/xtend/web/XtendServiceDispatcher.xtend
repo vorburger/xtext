@@ -8,6 +8,9 @@ import org.eclipse.xtext.web.server.IServiceContext
 import org.eclipse.xtext.web.server.InvalidRequestException
 import org.eclipse.xtext.web.server.XtextServiceDispatcher
 import org.eclipse.xtext.web.server.generator.GeneratorService
+import org.eclipse.xtend.web.devenv.IResourceBaseProvider2
+import org.eclipse.xtend.web.devenv.ListResourcesResult
+import com.google.common.collect.Lists
 
 @Log
 @Singleton
@@ -15,18 +18,20 @@ class XtendServiceDispatcher extends XtextServiceDispatcher {
 	
 	// TODO propose Gerrit to Xtext to make XtextServiceDispatcher's @Inject protected
 	@Inject GeneratorService generatorService
-	
 	@Inject Java2XtendService java2xtendService
+	@Inject IResourceBaseProvider2 resourceBaseProvider2
 	
 	override protected createServiceDescriptor(String serviceType, IServiceContext context) {
 		switch serviceType {
 			case 'java2xtend':
 				getJava2XtendService(context)
+			case 'list':
+           getListResourcesServices(context)
 			default:
 				super.createServiceDescriptor(serviceType, context)	
 		}
 	}
-	
+    
 	/** 
 	 * Xtend may generate several *.java from one *.xtend,
 	 * so we don't have an 'artifact' request parameter and
@@ -58,5 +63,17 @@ class XtendServiceDispatcher extends XtextServiceDispatcher {
 			// hasTextInput = context.parameterKeys.contains('fullText')
 		]
 	}
-	
+
+    def getListResourcesServices(IServiceContext context) {
+        new ServiceDescriptor => [
+            service = [
+                try {
+                     return new ListResourcesResult(Lists.newArrayList(resourceBaseProvider2.resourceIDs))
+                } catch (Throwable throwable) {
+                    handleError(throwable)
+                }
+            ]
+        ]
+    }
+    	
 }
