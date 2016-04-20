@@ -97,6 +97,8 @@ require([ "webjars/ace/1.2.0/src/ace" ], function() {
 		editor.xtextServices.successListeners.push(function(serviceType, result) {
 			if (serviceType == 'validate'&& result.issues.every(function(issue) {issue.severity != 'error'}) && editor.isFocused()) {
 				generateJava();
+				// auto-save
+				editor.xtextServices.saveResource();
 			}
 		});
 		
