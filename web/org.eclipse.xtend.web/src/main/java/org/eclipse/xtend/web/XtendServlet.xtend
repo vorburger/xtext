@@ -30,7 +30,7 @@ class XtendServlet extends XtextServlet {
 		super.init()
 		val Provider<ExecutorService> executorServiceProvider = [Executors.newCachedThreadPool => [executorServices += it]]
 		val injector = new XtendWebSetup(executorServiceProvider).createInjectorAndDoEMFRegistration()
-		injector.getInstance(ExamplesLibrary).writeExamplesToFiles
+		// injector.getInstance(ExamplesLibrary).writeExamplesToFiles
 	}
 	
 	override destroy() {

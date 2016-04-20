@@ -10,9 +10,9 @@ class ResourceBaseProvider2Impl extends ResourceBaseProviderImpl implements IRes
     protected val File resourceBase
     val String[] extensions = #[ "xtend" ]
     
-    new(String resourceBase) throws IOException {
-        super(resourceBase)
-        this.resourceBase = new File(resourceBase)
+    new(File resourceBase) throws IOException {
+        super(resourceBase.toString)
+        this.resourceBase = resourceBase
         if (!this.resourceBase.exists)
             this.resourceBase.mkdirs
         if (!this.resourceBase.isDirectory)

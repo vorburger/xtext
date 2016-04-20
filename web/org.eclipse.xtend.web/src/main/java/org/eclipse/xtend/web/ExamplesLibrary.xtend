@@ -7,14 +7,19 @@ import java.io.File
 import org.eclipse.xtend.web.devenv.WebDevEnvModule
 import com.google.inject.Inject
 import org.eclipse.xtext.web.server.persistence.IResourceBaseProvider
+import org.eclipse.xtend.web.devenv.Project
 
 class ExamplesLibrary {
 
     @Inject IResourceBaseProvider resourceBaseProvider 
     
     def static void main(String[] args) {
-        val examplesLibrary = Guice.createInjector(new WebDevEnvModule("../org.eclipse.xtend.web.examples/src/main/java")).getInstance(ExamplesLibrary)
+        val examplesLibrary = Guice.createInjector(new WebDevEnvModule(exampleProject())).getInstance(ExamplesLibrary)
     	   examplesLibrary.writeExamplesToFiles()
+    }
+
+    def static exampleProject() {
+        new Project(new File("../org.eclipse.xtend.web.examples"), "/src/main/java", "")
     }
 
     def writeExamplesToFiles() {

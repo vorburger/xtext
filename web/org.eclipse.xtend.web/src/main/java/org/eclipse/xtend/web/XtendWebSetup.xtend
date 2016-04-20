@@ -16,6 +16,8 @@ import org.eclipse.xtend.core.XtendRuntimeModule
 import org.eclipse.xtend.core.XtendStandaloneSetup
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
 import org.eclipse.xtend.web.devenv.WebDevEnvModule
+import org.eclipse.xtend.web.devenv.Project
+import java.io.File
 
 /**
  * Initialization support for running Xtext languages in web applications.
@@ -32,7 +34,8 @@ import org.eclipse.xtend.web.devenv.WebDevEnvModule
 	}
 
 	def protected webDevEnvModule() {
-	    new WebDevEnvModule("../org.eclipse.xtend.web.examples/src/main/java")
+	    val p = ExamplesLibrary.exampleProject
+      new WebDevEnvModule(p)
 	}
 
 }
