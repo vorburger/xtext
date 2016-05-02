@@ -8,14 +8,18 @@ import com.google.inject.Provider
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.apache.commons.io.FileUtils
 import org.eclipse.emf.common.util.URI
+import java.net.URLClassLoader
+import java.io.File
+import java.net.URL
+import org.eclipse.xtext.resource.XtextResourceSet
 
 @FinalFieldsConstructor
 class WebDevEnvResourceSetProvider implements IWebResourceSetProvider {
     
-    // TODO see e.g. org.eclipse.emf.mwe.utils.StandaloneSetup.setScanClassPath(boolean) ?
     // TODO Test refs should already work for classes from the web app, like this one 
-    // TODO setClasspathURIContext(URLClassLoader) for Project, parent NOT Web App's just JDK RT
     // TODO Cache session needed, or not? is IWebResourceSetProvider.get called for each request?
+
+    // NOTE No need for something like e.g. in org.eclipse.emf.mwe.utils.StandaloneSetup.setScanClassPath(boolean) here..
     
 //    val static SESSION_CACHE_KEY = WebDevEnvResourceSetProvider.name  
     
@@ -30,6 +34,7 @@ class WebDevEnvResourceSetProvider implements IWebResourceSetProvider {
 //            serviceContext.session.get(SESSION_CACHE_KEY, [
             theResourceSet = newResourceSetProvider.get
             loadAllFiles(project, theResourceSet)
+            // TODO (theResourceSet as XtextResourceSet).classpathURIContext = projectClassLoader
 //            theResourceSet
 //            ])
         }
@@ -43,5 +48,13 @@ class WebDevEnvResourceSetProvider implements IWebResourceSetProvider {
         	resourceSet.getResource(uri, true)
         }
     }
-    
+
+    def URLClassLoader getProjectClassLoader() {
+        val dotClasspathFile = new File(project.baseDir, ".classpath").toPath
+        // val paths = new EclipseClasspathFileReader(dotClasspathFile).paths
+        // TODO factor out the code to convert list of Path to URL from HotClassLoaderImpl into a Util so we can use it here
+        val URL[] urls = null
+        val parentClassLoader = String.classLoader // NOT the one of e.g. this class, as we of course do not want the WebApp's classes to be available on the sample project's classpath!
+        new URLClassLoader(urls, parentClassLoader)
+    }
 }

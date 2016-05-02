@@ -4,6 +4,12 @@ plugins {
 	id 'org.xtext.xtend' version '1.0.4'
 }
 
+repositories {
+     mavenLocal()
+     jcenter()
+     // maven { url "http://repo.maven.apache.org/maven2" }
+}
+
 dependencies {
 //	compile project(':plugins:org.eclipse.xtend.ide.common')
 //	compile project(":web:org.eclipse.xtext.xbase.web")
@@ -22,6 +28,9 @@ dependencies {
 	providedCompile "org.slf4j:slf4j-simple:1.7.12"
 	
 	compile "commons-io:commons-io:2.4"
+	
+	// This dependency (HoTea) is *ONLY* used here for & to avoid copy/pasting it's EclipseClasspathFileReader util class (NOT actually HoTea.. yet?)
+	compile 'ch.vorburger:hotea:1.0.0-SNAPSHOT'
 }
 
 task jettyRun(type:JavaExec) {
