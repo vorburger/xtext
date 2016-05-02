@@ -12,6 +12,13 @@ import org.eclipse.emf.common.util.URI
 @FinalFieldsConstructor
 class WebDevEnvResourceSetProvider implements IWebResourceSetProvider {
     
+    // TODO see e.g. org.eclipse.emf.mwe.utils.StandaloneSetup.setScanClassPath(boolean) ?
+    // TODO Test refs should already work for classes from the web app, like this one 
+    // TODO setClasspathURIContext(URLClassLoader) for Project, parent NOT Web App's just JDK RT
+    // TODO Cache session needed, or not? is IWebResourceSetProvider.get called for each request?
+    
+//    val static SESSION_CACHE_KEY = WebDevEnvResourceSetProvider.name  
+    
     val Project project
     
     @Inject Provider<ResourceSet> newResourceSetProvider;
@@ -19,8 +26,12 @@ class WebDevEnvResourceSetProvider implements IWebResourceSetProvider {
     
     override get(String resourceId, IServiceContext serviceContext) {
         if (theResourceSet == null) {
+            println("No ResourceSet, creating a new one now..")
+//            serviceContext.session.get(SESSION_CACHE_KEY, [
             theResourceSet = newResourceSetProvider.get
             loadAllFiles(project, theResourceSet)
+//            theResourceSet
+//            ])
         }
         theResourceSet
     }
