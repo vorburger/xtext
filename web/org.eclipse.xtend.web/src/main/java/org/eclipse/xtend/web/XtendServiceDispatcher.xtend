@@ -21,6 +21,8 @@ class XtendServiceDispatcher extends XtextServiceDispatcher {
 	@Inject Java2XtendService java2xtendService
 	@Inject IResourceBaseProvider2 resourceBaseProvider2
 	
+	// TODO it would be better to create a new service for this instead of changing the semantics of the original generator service (https://github.com/eclipse/xtext/pull/1002)
+		
 	override protected createServiceDescriptor(String serviceType, IServiceContext context) {
 		switch serviceType {
 			case 'java2xtend':

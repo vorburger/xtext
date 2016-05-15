@@ -7,7 +7,9 @@
 - [ ] HOST it somewhere
 
 
-- [ ] XtendWebSetup Project configuration more flexible
+- [ ] XtendWebSetup Project location configuration more flexible
+
+- [ ] Set up more configurable allow another project to use this without XtendServiceDispatcher (move to separate project xtend.web.generator) and code generation shown in UI
 
 - [ ] multi user
 
