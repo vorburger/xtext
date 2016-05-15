@@ -20,12 +20,9 @@ import org.eclipse.xtext.resource.XtextResourceSet
 @FinalFieldsConstructor
 class WebDevEnvResourceSetProvider implements IWebResourceSetProvider {
     
-    // TODO Test refs should already work for classes from the web app, like this one 
-    // TODO Cache session needed, or not? is IWebResourceSetProvider.get called for each request?
-
-    // NOTE No need for something like e.g. in org.eclipse.emf.mwe.utils.StandaloneSetup.setScanClassPath(boolean) here..
-    
-//    val static SESSION_CACHE_KEY = WebDevEnvResourceSetProvider.name  
+    // NOTE Xtext already seems to cache, as we can see that IWebResourceSetProvider.get is called only once, and not for each request.
+    // So a Cache in the HTTP session (via serviceContext.session) does not appear to be needed.  If it was, see commented out code. 
+    // val static SESSION_CACHE_KEY = WebDevEnvResourceSetProvider.name  
     
     val Project project
     
@@ -34,7 +31,6 @@ class WebDevEnvResourceSetProvider implements IWebResourceSetProvider {
     
     override get(String resourceId, IServiceContext serviceContext) {
         if (resourceSet == null) {
-            println("No ResourceSet, creating a new one now..")
 //            serviceContext.session.get(SESSION_CACHE_KEY, [
             resourceSet = newResourceSetProvider.get
             val theXtextResourceSet = resourceSet as XtextResourceSet
