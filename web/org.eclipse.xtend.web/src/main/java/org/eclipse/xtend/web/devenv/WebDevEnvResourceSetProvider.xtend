@@ -1,16 +1,20 @@
 package org.eclipse.xtend.web.devenv
 
-import org.eclipse.xtext.web.server.model.IWebResourceSetProvider
-import org.eclipse.xtext.web.server.IServiceContext
-import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import ch.vorburger.hotea.util.EclipseClasspathFileReader
 import com.google.inject.Inject
 import com.google.inject.Provider
-import org.eclipse.emf.ecore.resource.ResourceSet
-import org.apache.commons.io.FileUtils
-import org.eclipse.emf.common.util.URI
-import java.net.URLClassLoader
 import java.io.File
 import java.net.URL
+import java.net.URLClassLoader
+import java.nio.file.Path
+import java.util.List
+import org.apache.commons.io.FileUtils
+import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.resource.ResourceSet
+import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import org.eclipse.xtext.web.server.IServiceContext
+import org.eclipse.xtext.web.server.model.IWebResourceSetProvider
+import java.util.ArrayList
 import org.eclipse.xtext.resource.XtextResourceSet
 
 @FinalFieldsConstructor
@@ -26,22 +30,23 @@ class WebDevEnvResourceSetProvider implements IWebResourceSetProvider {
     val Project project
     
     @Inject Provider<ResourceSet> newResourceSetProvider;
-    var ResourceSet theResourceSet; // TODO later expiring Cache Map with several RS, to provide multi project support
+    var ResourceSet resourceSet; // TODO later expiring Cache Map with several RS, to provide multi project support
     
     override get(String resourceId, IServiceContext serviceContext) {
-        if (theResourceSet == null) {
+        if (resourceSet == null) {
             println("No ResourceSet, creating a new one now..")
 //            serviceContext.session.get(SESSION_CACHE_KEY, [
-            theResourceSet = newResourceSetProvider.get
-            loadAllFiles(project, theResourceSet)
-            // TODO (theResourceSet as XtextResourceSet).classpathURIContext = projectClassLoader
+            resourceSet = newResourceSetProvider.get
+            val theXtextResourceSet = resourceSet as XtextResourceSet
+            theXtextResourceSet.classpathURIContext = projectClassLoader
+            loadAllXtendFiles(project, resourceSet)
 //            theResourceSet
 //            ])
         }
-        theResourceSet
+        resourceSet
     }
     
-    def loadAllFiles(Project project, ResourceSet resourceSet) {
+    protected def loadAllXtendFiles(Project project, ResourceSet resourceSet) {
         val xtendFiles = FileUtils.listFiles(project.sourceDirectory, Project.xtendExtensions, true)
         for (xtendFile : xtendFiles) {
         	val uri = URI.createFileURI(xtendFile.absolutePath) // URI.createURI(xtendFile.toURI().toString())
@@ -49,12 +54,21 @@ class WebDevEnvResourceSetProvider implements IWebResourceSetProvider {
         }
     }
 
-    def URLClassLoader getProjectClassLoader() {
+    protected def URLClassLoader getProjectClassLoader() {
         val dotClasspathFile = new File(project.baseDir, ".classpath").toPath
-        // val paths = new EclipseClasspathFileReader(dotClasspathFile).paths
-        // TODO factor out the code to convert list of Path to URL from HotClassLoaderImpl into a Util so we can use it here
-        val URL[] urls = null
+        val paths = new EclipseClasspathFileReader(dotClasspathFile).paths
+        val URL[] urls = getURLs(paths)
         val parentClassLoader = String.classLoader // NOT the one of e.g. this class, as we of course do not want the WebApp's classes to be available on the sample project's classpath!
         new URLClassLoader(urls, parentClassLoader)
     }
+
+    //  Code to convert list of Path to URL copy/pasted from HotClassLoaderImpl
+    protected def URL[] getURLs(List<Path> paths) {
+        val urls = new ArrayList<URL>(paths.size())
+        for (var int i = 0; i < paths.size(); i++) {
+            urls.add(paths.get(i).toUri().toURL())
+        }
+        return urls
+    }
+    
 }
